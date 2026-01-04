@@ -1,0 +1,39 @@
+{
+  "name": "sentinel-ai-backend",
+  "version": "1.0.0",
+  "description": "Backend server for Sentinel AI - AI-powered financial guardian on Cronos zkEVM",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "nodemon --exec ts-node src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "cronos",
+    "zkevm",
+    "ai-agent",
+    "x402",
+    "rwa",
+    "defi"
+  ],
+  "author": "Sentinel AI Team",
+  "license": "MIT",
+  "dependencies": {
+    "@crypto.com/ai-agent-client": "^1.0.2",
+    "@crypto.com/facilitator-client": "^1.0.2",
+    "axios": "^1.13.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "ethers": "^6.16.0",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.0.3",
+    "nodemon": "^3.1.11",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}

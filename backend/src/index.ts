@@ -1,0 +1,54 @@
+import express, { Express, Request, Response } from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import { agentRouter } from './routes/agent';
+import { walletRouter } from './routes/wallet';
+import { paymentRouter } from './routes/payment';
+
+dotenv.config();
+
+const app: Express = express();
+const port = process.env.PORT || 3000;
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+// Health check
+app.get('/health', (req: Request, res: Response) => {
+  res.json({ 
+    status: 'ok', 
+    service: 'Sentinel AI Backend',
+    version: '1.0.0',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// API Routes
+app.use('/api/agent', agentRouter);
+app.use('/api/wallet', walletRouter);
+app.use('/api/payment', paymentRouter);
+
+// Error handling middleware
+app.use((err: Error, req: Request, res: Response, next: Function) => {
+  console.error('Error:', err.message);
+  res.status(500).json({ 
+    error: 'Internal server error',
+    message: process.env.NODE_ENV === 'development' ? err.message : undefined
+  });
+});
+
+// Start server
+app.listen(port, () => {
+  console.log(`
+╔═══════════════════════════════════════════════════════════╗
+║                    🛡️  SENTINEL AI                        ║
+║              AI-Powered Financial Guardian                 ║
+╠═══════════════════════════════════════════════════════════╣
+║  Server running on port ${port}                             ║
+║  Environment: ${process.env.NODE_ENV || 'development'}                          ║
+╚═══════════════════════════════════════════════════════════╝
+  `);
+});
+
+export default app;
