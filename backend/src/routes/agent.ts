@@ -24,10 +24,7 @@ router.post('/chat', async (req: Request, res: Response) => {
   }
 });
 
-/**
- * POST /api/agent/analyze-portfolio
- * Ask AI to analyze user's portfolio
- */
+
 router.post('/analyze-portfolio', async (req: Request, res: Response) => {
   try {
     const { userId, walletAddress } = req.body;
@@ -44,10 +41,7 @@ router.post('/analyze-portfolio', async (req: Request, res: Response) => {
   }
 });
 
-/**
- * POST /api/agent/recommend-investment
- * Get AI investment recommendations
- */
+
 router.post('/recommend-investment', async (req: Request, res: Response) => {
   try {
     const { userId, riskProfile, amount } = req.body;

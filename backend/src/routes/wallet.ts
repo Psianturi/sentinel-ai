@@ -4,10 +4,6 @@ import { WalletService } from '../services/WalletService';
 const router = Router();
 const walletService = new WalletService();
 
-/**
- * POST /api/wallet/create
- * Create a new embedded wallet for user
- */
 router.post('/create', async (req: Request, res: Response) => {
   try {
     const { userId, email } = req.body;
@@ -56,10 +52,7 @@ router.get('/portfolio/:address', async (req: Request, res: Response) => {
   }
 });
 
-/**
- * POST /api/wallet/claim-faucet
- * Claim testnet tokens from faucet
- */
+
 router.post('/claim-faucet', async (req: Request, res: Response) => {
   try {
     const { address, token } = req.body;
@@ -76,10 +69,7 @@ router.post('/claim-faucet', async (req: Request, res: Response) => {
   }
 });
 
-/**
- * POST /api/wallet/deposit
- * Deposit tokens into SentinelVault
- */
+
 router.post('/deposit', async (req: Request, res: Response) => {
   try {
     const { address, token, amount } = req.body;
