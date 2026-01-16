@@ -99,22 +99,23 @@ export class SentinelAgent {
     // Add user message to history
     history.push({ role: 'user', content: message });
     
-    // Detect intent and generate response
+    // Detect intent using Gemini for better accuracy
     let response: ChatResponse;
+    const intent = await this.detectIntentWithGemini(message);
     
-    if (this.containsAny(lowerMessage, ['harga', 'price', 'berapa', 'nilai'])) {
+    if (intent === 'PRICE_QUERY') {
       response = await this.handlePriceQuery(message);
-    } else if (this.containsAny(lowerMessage, ['beli', 'buy', 'invest', 'investasi'])) {
+    } else if (intent === 'BUY_INTENT') {
       response = await this.handleBuyIntent(message);
-    } else if (this.containsAny(lowerMessage, ['jual', 'sell', 'withdraw', 'tarik'])) {
+    } else if (intent === 'SELL_INTENT') {
       response = await this.handleSellIntent(message);
-    } else if (this.containsAny(lowerMessage, ['bayar', 'pay', 'transfer', 'kirim'])) {
+    } else if (intent === 'PAYMENT_INTENT') {
       response = await this.handlePaymentIntent(message);
-    } else if (this.containsAny(lowerMessage, ['yield', 'bunga', 'profit', 'keuntungan'])) {
+    } else if (intent === 'YIELD_QUERY') {
       response = await this.handleYieldQuery(message);
-    } else if (this.containsAny(lowerMessage, ['portfolio', 'saldo', 'balance', 'aset'])) {
+    } else if (intent === 'PORTFOLIO_QUERY') {
       response = await this.handlePortfolioQuery(message);
-    } else if (this.containsAny(lowerMessage, ['rekomendasi', 'recommend', 'saran', 'advice'])) {
+    } else if (intent === 'RECOMMENDATION_QUERY') {
       response = await this.handleRecommendationQuery(message);
     } else {
       response = await this.handleGeneralQuery(message, history);
@@ -129,6 +130,53 @@ export class SentinelAgent {
     }
     
     return response;
+  }
+
+  /**
+   * Detect user intent using Google Gemini API
+   */
+  private async detectIntentWithGemini(message: string): Promise<string> {
+    if (!this.genAI) {
+      // Fallback to keyword detection if Gemini API key not configured
+      const lowerMessage = message.toLowerCase();
+      if (this.containsAny(lowerMessage, ['harga', 'price', 'berapa', 'nilai'])) return 'PRICE_QUERY';
+      if (this.containsAny(lowerMessage, ['beli', 'buy', 'invest', 'investasi'])) return 'BUY_INTENT';
+      if (this.containsAny(lowerMessage, ['jual', 'sell', 'withdraw', 'tarik'])) return 'SELL_INTENT';
+      if (this.containsAny(lowerMessage, ['bayar', 'pay', 'transfer', 'kirim'])) return 'PAYMENT_INTENT';
+      if (this.containsAny(lowerMessage, ['yield', 'bunga', 'profit', 'keuntungan'])) return 'YIELD_QUERY';
+      if (this.containsAny(lowerMessage, ['portfolio', 'saldo', 'balance', 'aset'])) return 'PORTFOLIO_QUERY';
+      if (this.containsAny(lowerMessage, ['rekomendasi', 'recommend', 'saran', 'advice'])) return 'RECOMMENDATION_QUERY';
+      return 'GENERAL_QUERY';
+    }
+
+    try {
+      const model = this.genAI.getGenerativeModel({ model: this.geminiModel });
+      
+      const prompt = `
+        Detect the intent of the user's message. The intent should be one of:
+        PRICE_QUERY - Asking about prices or values of assets (gold, bonds)
+        BUY_INTENT - Wanting to buy, invest, or purchase assets
+        SELL_INTENT - Wanting to sell, withdraw, or cash out assets
+        PAYMENT_INTENT - Wanting to make a payment or transfer funds
+        YIELD_QUERY - Asking about yield, interest, or profits
+        PORTFOLIO_QUERY - Asking about portfolio, balance, or assets
+        RECOMMENDATION_QUERY - Asking for recommendations or advice
+        GENERAL_QUERY - General questions or conversations
+
+        User message: ${message}
+        Intent:
+      `;
+
+      const result = await model.generateContent(prompt);
+      const intent = result.response.text().trim().toUpperCase();
+      
+      // Validate intent
+      const validIntents = ['PRICE_QUERY', 'BUY_INTENT', 'SELL_INTENT', 'PAYMENT_INTENT', 'YIELD_QUERY', 'PORTFOLIO_QUERY', 'RECOMMENDATION_QUERY', 'GENERAL_QUERY'];
+      return validIntents.includes(intent) ? intent : 'GENERAL_QUERY';
+    } catch (error) {
+      console.error('Gemini intent detection error:', error);
+      return 'GENERAL_QUERY';
+    }
   }
 
   /**
@@ -413,9 +461,8 @@ export class SentinelAgent {
   private async handleBuyIntent(message: string): Promise<ChatResponse> {
     const marketData = await this.mcpService.getMarketData();
     
-    // Extract amount from message (simplified)
-    const amountMatch = message.match(/\$?(\d+)/);
-    const amount = amountMatch ? parseInt(amountMatch[1]) : 100;
+    // Extract amount using Gemini for better accuracy
+    const amount = await this.extractAmountWithGemini(message);
     
     const goldAmount = amount / marketData.goldPrice;
     const bondAmount = amount / 100;
@@ -442,6 +489,38 @@ export class SentinelAgent {
         'Split 50/50'
       ]
     };
+  }
+
+  /**
+   * Extract monetary amount from message using Google Gemini API
+   */
+  private async extractAmountWithGemini(message: string): Promise<number> {
+    if (!this.genAI) {
+      // Fallback to regex if Gemini API key not configured
+      const amountMatch = message.match(/\$?(\d+)/);
+      return amountMatch ? parseInt(amountMatch[1]) : 100;
+    }
+
+    try {
+      const model = this.genAI.getGenerativeModel({ model: this.geminiModel });
+      
+      const prompt = `
+        Extract the monetary amount from the user's message. Return only the numeric value in USD.
+        If no amount is specified, return 100.
+
+        User message: ${message}
+        Amount (USD):
+      `;
+
+      const result = await model.generateContent(prompt);
+      const amountStr = result.response.text().trim();
+      const amount = parseFloat(amountStr);
+      
+      return isNaN(amount) || amount <= 0 ? 100 : amount;
+    } catch (error) {
+      console.error('Gemini amount extraction error:', error);
+      return 100;
+    }
   }
 
   private async handleSellIntent(message: string): Promise<ChatResponse> {

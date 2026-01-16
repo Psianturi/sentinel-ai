@@ -11,7 +11,19 @@ const app: Express = express();
 const port = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:8080', 
+           'http://127.0.0.1:8080', 'http://localhost:49152', 'http://127.0.0.1:49152',
+           'http://10.0.2.2:3000', // Android emulator
+           'http://10.0.0.1:3000', // Local network
+           /^http:\/\/localhost:\d+$/, // All localhost ports
+           /^http:\/\/127\.0\.0\.1:\d+$/, // All 127.0.0.1 ports
+           /^http:\/\/10\.0\.\d+\.\d+:\d+$/ // All local network addresses
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
+}));
 app.use(express.json());
 
 // Health check

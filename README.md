@@ -2,7 +2,7 @@
 
 AI-Powered Financial Guardian on Cronos zkEVM.
 
-Sentinel AI is a hackathon project that aims to make Real World Assets (RWA) feel like modern digital banking: users can invest into tokenized “gold” and “bonds”, earn simulated yield, and pay merchants using programmatic payments.
+Sentinel AI is a hackathon project that aims to make Real World Assets (RWA) feel like modern digital banking: users can invest in tokenized "gold" and "bonds", earn simulated yield, and pay merchants using programmatic payments.
 
 ## Overview
 
@@ -11,7 +11,7 @@ This repository targets the Cronos ecosystem and focuses on:
 - AI agent experience (chat-driven intents)
 - RWA-like tokens for demo (sGOLD and sBOND)
 - Programmatic payments flow (x402 concept)
-- “Invisible mode” UX (auto actions under a threshold)
+- "Invisible mode" UX (auto actions under a threshold)
 
 ## Repository layout
 
@@ -39,13 +39,13 @@ Backend scaffolding (in [backend/src](backend/src)):
 
 Flutter:
 
-- Fresh Flutter app created under [flutter_app](flutter_app)
+- Complete Flutter app with chat interface, dashboard, and faucet functionality
 
 ## Quick start
 
 Prerequisites:
 
-- Node.js 20+ (note: contracts toolchain works best on Node 18/20 with Hardhat v2; see “Known issues”)
+- Node.js 20+ (note: contracts toolchain works best on Node 18/20 with Hardhat v2; see "Known issues")
 - Flutter 3+
 
 ### 1) Contracts

@@ -119,6 +119,17 @@ export class WalletService {
     let sBondBalance = '0';
 
     try {
+      // Validate address format (very basic check)
+      if (!address.startsWith('0x') || address.length !== 42) {
+        console.error('Invalid address format:', address);
+        return {
+          sGold: '0',
+          sBond: '0',
+          native: '0',
+          usdValue: 0
+        };
+      }
+
       // Get native balance
       const nativeBalance = await this.provider.getBalance(address);
 
