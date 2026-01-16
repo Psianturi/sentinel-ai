@@ -169,8 +169,11 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
-        child: Column(
-          children: [
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom + 20),
+            child: Column(
+              children: [
             // Dashboard Section
             if (balanceData != null) ...[
               Container(
@@ -292,167 +295,168 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 16),
 
             // Chat Section
-            Expanded(
-              child: Container(
-                margin: const EdgeInsets.all(16),
-                child: Card(
-                  elevation: 8,
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primaryContainer,
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(16),
-                            topRight: Radius.circular(16),
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.chat_bubble_outline,
-                                color: Theme.of(context).colorScheme.primary),
-                            const SizedBox(width: 8),
-                            Text(
-                              'AI Financial Assistant',
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
+            Container(
+              margin: const EdgeInsets.all(16),
+              height: MediaQuery.of(context).size.height * 0.5,
+              child: Card(
+                elevation: 8,
+                child: Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primaryContainer,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(16),
+                          topRight: Radius.circular(16),
                         ),
                       ),
-                      Expanded(
-                        child: chatMessages.isEmpty
-                            ? Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.smart_toy_outlined,
-                                      size: 64,
-                                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
+                      child: Row(
+                        children: [
+                          Icon(Icons.chat_bubble_outline,
+                              color: Theme.of(context).colorScheme.primary),
+                          const SizedBox(width: 8),
+                          Text(
+                            'AI Financial Assistant',
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: chatMessages.isEmpty
+                          ? Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.smart_toy_outlined,
+                                    size: 64,
+                                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    'Ask me about investments,\nprices, or portfolio advice!',
+                                    textAlign: TextAlign.center,
+                                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
                                     ),
-                                    const SizedBox(height: 16),
-                                    Text(
-                                      'Ask me about investments,\nprices, or portfolio advice!',
-                                      textAlign: TextAlign.center,
-                                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : ListView.builder(
+                              padding: const EdgeInsets.all(16),
+                              itemCount: chatMessages.length,
+                              itemBuilder: (context, index) {
+                                final chat = chatMessages[index];
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 12),
+                                  child: Align(
+                                    alignment: chat['type'] == 'user'
+                                        ? Alignment.centerRight
+                                        : Alignment.centerLeft,
+                                    child: Container(
+                                      constraints: BoxConstraints(
+                                        maxWidth: MediaQuery.of(context).size.width * 0.75,
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : ListView.builder(
-                                padding: const EdgeInsets.all(16),
-                                itemCount: chatMessages.length,
-                                itemBuilder: (context, index) {
-                                  final chat = chatMessages[index];
-                                  return Padding(
-                                    padding: const EdgeInsets.only(bottom: 12),
-                                    child: Align(
-                                      alignment: chat['type'] == 'user'
-                                          ? Alignment.centerRight
-                                          : Alignment.centerLeft,
-                                      child: Container(
-                                        constraints: BoxConstraints(
-                                          maxWidth: MediaQuery.of(context).size.width * 0.75,
+                                      padding: const EdgeInsets.all(12),
+                                      decoration: BoxDecoration(
+                                        color: chat['type'] == 'user'
+                                            ? Theme.of(context).colorScheme.primary
+                                            : Theme.of(context).colorScheme.surface,
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(chat['type'] == 'user' ? 16 : 4),
+                                          topRight: Radius.circular(chat['type'] == 'user' ? 4 : 16),
+                                          bottomLeft: const Radius.circular(16),
+                                          bottomRight: const Radius.circular(16),
                                         ),
-                                        padding: const EdgeInsets.all(12),
-                                        decoration: BoxDecoration(
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withValues(alpha: 0.1),
+                                            blurRadius: 4,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Text(
+                                        chat['text'],
+                                        style: TextStyle(
                                           color: chat['type'] == 'user'
-                                              ? Theme.of(context).colorScheme.primary
-                                              : Theme.of(context).colorScheme.surface,
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(chat['type'] == 'user' ? 16 : 4),
-                                            topRight: Radius.circular(chat['type'] == 'user' ? 4 : 16),
-                                            bottomLeft: const Radius.circular(16),
-                                            bottomRight: const Radius.circular(16),
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.black.withValues(alpha: 0.1),
-                                              blurRadius: 4,
-                                              offset: const Offset(0, 2),
-                                            ),
-                                          ],
-                                        ),
-                                        child: Text(
-                                          chat['text'],
-                                          style: TextStyle(
-                                            color: chat['type'] == 'user'
-                                                ? Theme.of(context).colorScheme.onPrimary
-                                                : Theme.of(context).colorScheme.onSurface,
-                                          ),
+                                              ? Theme.of(context).colorScheme.onPrimary
+                                              : Theme.of(context).colorScheme.onSurface,
                                         ),
                                       ),
                                     ),
-                                  );
-                                },
-                              ),
+                                  ),
+                                );
+                              },
+                            ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surface,
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(16),
+                          bottomRight: Radius.circular(16),
+                        ),
                       ),
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surface,
-                          borderRadius: const BorderRadius.only(
-                            bottomLeft: Radius.circular(16),
-                            bottomRight: Radius.circular(16),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: messageController,
+                              decoration: InputDecoration(
+                                hintText: 'Ask about investments, prices, or advice...',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(24),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 12,
+                                ),
+                              ),
+                              onSubmitted: (_) => sendMessage(),
+                            ),
                           ),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                controller: messageController,
-                                decoration: InputDecoration(
-                                  hintText: 'Ask about investments, prices, or advice...',
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(24),
-                                  ),
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 12,
-                                  ),
-                                ),
-                                onSubmitted: (_) => sendMessage(),
+                          const SizedBox(width: 8),
+                          Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Theme.of(context).colorScheme.primary,
+                                  Theme.of(context).colorScheme.secondary,
+                                ],
                               ),
+                              shape: BoxShape.circle,
                             ),
-                            const SizedBox(width: 8),
-                            Container(
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    Theme.of(context).colorScheme.primary,
-                                    Theme.of(context).colorScheme.secondary,
-                                  ],
-                                ),
-                                shape: BoxShape.circle,
-                              ),
-                              child: IconButton(
-                                onPressed: isLoading ? null : sendMessage,
-                                icon: isLoading
-                                    ? const SizedBox(
-                                        width: 20,
-                                        height: 20,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                        ),
-                                      )
-                                    : const Icon(Icons.send, color: Colors.white),
-                              ),
+                            child: IconButton(
+                              onPressed: isLoading ? null : sendMessage,
+                              icon: isLoading
+                                  ? const SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                      ),
+                                    )
+                                  : const Icon(Icons.send, color: Colors.white),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
           ],
+            ),
+          ),
         ),
       ),
     );
