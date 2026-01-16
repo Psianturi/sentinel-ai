@@ -1,0 +1,23 @@
+{
+  "name": "sentinel-ai",
+  "version": "1.0.0",
+  "description": "Sentinel AI - AI-Powered Financial Guardian on Cronos zkEVM",
+  "main": "backend/src/index.ts",
+  "scripts": {
+    "dev": "cd backend && npm run dev",
+    "build": "cd backend && npm run build",
+    "start": "cd backend && npm start",
+    "deploy:contracts": "cd contracts && npm run deploy:testnet",
+    "compile:contracts": "cd contracts && npm run compile"
+  },
+  "keywords": [
+    "cronos",
+    "zkevm",
+    "ai-agent",
+    "x402",
+    "rwa",
+    "defi"
+  ],
+  "author": "Sentinel AI Team",
+  "license": "MIT"
+}
